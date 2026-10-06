@@ -61,52 +61,6 @@ The Google component is **MediaPipe Face Landmarker**, not a cloud Face API. `fa
 
 `new FaceTracker(workerURL)` exposes `init()`, `detect(imageBitmap)` and `close()`. The worker owns and closes transferred image bitmaps. The UI serializes requests and prioritizes analysis snapshots so each detection comparison uses one fixed camera frame.
 
-## Upload to GitHub
-
-1. Extract this ZIP.
-2. Create an empty GitHub repository.
-3. Upload the **contents** of `face-detection-avoidance-flask`, including `static`, `templates`, the Python files and requirements. Do not upload only the ZIP.
-4. Keep all models, WASM files and third-party license files. The largest bundled file is under 10 MB.
-
-Or use Git from the extracted project directory:
-
-```bash
-git init
-git add .
-git commit -m "Add Flask face detection avoidance demo"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
-git push -u origin main
-```
-
-This export contains no ChatGPT Sites hosting configuration, credentials or user camera images. GitHub Pages cannot run Flask; use a Python web host for this version.
-
-## Deploy with a Python host
-
-Build / install command:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start command:
-
-```bash
-python serve.py
-```
-
-The server reads `PORT` (default `8080`); the health endpoint is `/health`. Configure HTTPS using your host or reverse proxy. `serve.py` uses Waitress; `app.py` is for local development. Serve the entire `static` directory, including `.wasm` and `.task` files. There are no API secrets to configure.
-
-## Checks
-
-```bash
-python -m unittest discover -s tests
-node tests/test_browser_modules.cjs
-node tests/test_pattern_learning.cjs
-```
-
-Node is only needed for the optional JavaScript checks, not to run the app. These checks cover Flask routing, asset paths/MIME types, startup behavior the extracted tracking component, and real TensorFlow.js learning with tensor cleanup. They do not replace testing camera permissions, tracking quality and FPS on a physical phone.
-
 ## How to read results
 
 If the original frame has a face box and the filtered frame reports **Face not detected**, the pattern caused a miss for that evaluated frame. Miss rate is historical and only includes comparable frames where the original detector found the face and any required filter tracking was available. Preview images are live; boxes describe the latest analyzed snapshot. A stale or missing tracker is not evidence of successful avoidance.
